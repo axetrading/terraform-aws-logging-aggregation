@@ -1,4 +1,4 @@
-# terraform-aws-eks-cloudwatch
+# terraform-aws-logging-aggregation
 
 Example usage:
 
