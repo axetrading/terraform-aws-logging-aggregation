@@ -68,7 +68,10 @@ cloudWatch:
   logGroupName: "/aws/eks/${cluster_name}/ns/$(kubernetes['namespace_name'])"
   logStreamName: "$(kubernetes['pod_name'])"
   logStreamPrefix: 
-  logKey:
+  logKey: log
+  # By default, the whole log record will be sent to CloudWatch. 
+  # If you specify a key name with this option, then only the value of that key 
+  # will be sent to CloudWatch.
   logFormat:
   logRetentionDays: ${log_retention_in_days}
   roleArn:
