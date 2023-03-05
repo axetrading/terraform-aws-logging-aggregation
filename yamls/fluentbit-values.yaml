@@ -20,7 +20,8 @@ service:
   #   HTTP_PORT    2020
   parsersFiles:
     - /fluent-bit/parsers/parsers.conf
-  additionalParsers: |
+    - /fluent-bit/parsers/parsers_extra.conf
+  extraParsers: |
     [PARSER]
       Name    kube-app
       Format  regex
