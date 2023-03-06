@@ -26,7 +26,10 @@ service:
       Name    kube-app
       Format  regex
       Regex   (?<tag>[^.]+)?\.?(?<pod_name>[a-z0-9](?:[-a-z0-9]*[a-z0-9])?(?:\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*)\.log$
-
+    [PARSER]
+      Name    kube-pod-name
+      Format  regex
+      Regex   (?<pod_name>[a-z0-9](?:[-a-z0-9]*[a-z0-9])?(?:\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*)\.log$
 input:
   tag: "kube.*"
   path: "/var/log/containers/*.log"
