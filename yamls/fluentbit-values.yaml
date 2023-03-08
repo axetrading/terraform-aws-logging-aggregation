@@ -38,7 +38,7 @@ input:
   refreshInterval: 10
   
   extraInputs: |
-    exclude_path /var/log/containers/*-log-fetcher-*.log, /var/logs/container/*_kube-system_*.log, /var/logs/container/*_monitoring_*.log, /var/log/containers/*_amazon-cloudwatch_*.log
+    exclude_path /var/log/containers/*-log-fetcher-*.log
 
 additionalInputs: |
     [INPUT]
@@ -94,9 +94,9 @@ additionalFilters: |
 
 cloudWatch:
   enabled: true
-  match: "*"
+  match: "kube.*"
   region: ${region}
-  logGroupName: "$(kubernetes['namespace_name'])-$(kubernetes['labels']['app.kubernetes.io/instance'])-output"
+  logGroupName: "$(kubernetes['namespace_name'])-$(kubernetes['container_name'])-output"
   logStreamName: "$(kubernetes['pod_name'])"
   logStreamPrefix: 
   logKey: message
