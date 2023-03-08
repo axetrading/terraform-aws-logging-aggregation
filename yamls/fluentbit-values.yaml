@@ -45,7 +45,7 @@ additionalInputs: |
         Name              tail
         Tag               app.*
         Path              /var/log/containers/*-log-fetcher-*.log
-        DB                /logs/app.db
+        DB                /var/log/flb_app.db
         Parser            cri
         Mem_Buf_Limit     50MB
         Skip_Long_Lines   On
