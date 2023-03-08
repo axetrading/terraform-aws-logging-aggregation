@@ -26,28 +26,30 @@ service:
       Name    kube-app
       Format  regex
       Regex   (?<tag>[^.]+)?\.?(?<pod_name>[a-z0-9](?:[-a-z0-9]*[a-z0-9])?(?:\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*)\.log$
-    [PARSER]
-      Name    kube-pod-name
-      Format  regex
-      Regex   (?<pod_name>[a-z0-9](?:[-a-z0-9]*[a-z0-9])?(?:\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*)\.log$
+
 input:
   tag: "kube.*"
   path: "/var/log/containers/*.log"
   db: "/var/log/flb_kube.db"
-  parser: docker
-  dockerMode: "On"
+  parser: cri
+  dockerMode: "Off"
   memBufLimit: 5MB
   skipLongLines: "On"
   refreshInterval: 10
-  # extraInputs: |
-  #   ...
+  
+  extraInputs: |
+    Exclude_Path: "/var/log/containers/*-log-fetcher-*.log, /var/logs/container/*_kube-system_*.log, /var/logs/container/*_monitoring_*.log, /var/log/containers/*_amazon-cloudwatch_*.log"
 
-# additionalInputs: |
-#   [INPUT]
-#       Name         winlog
-#       Channels     Setup,Windows PowerShell
-#       Interval_Sec 1
-#       DB           winlog.sqlite
+additionalInputs: |
+    [INPUT]
+        Name              tail
+        Tag               app.*
+        Path              /var/log/containers/*-log-fetcher-*.log
+        DB                /logs/app.db
+        Parser            cri
+        Mem_Buf_Limit     50MB
+        Skip_Long_Lines   On
+        Refresh_Interval  10
 
 filter:
   match: "kube.*"
@@ -60,20 +62,44 @@ filter:
   # extraFilters: |
   #   ...
 
-# additionalFilters: |
-#   [FILTER]
-#       Name   grep
-#       Match  *
-#       Exclude log lvl=debug*
+additionalFilters: |
+    [FILTER]
+        Name                kubernetes
+        Match               app.*
+        Kube_URL            https://kubernetes.default.svc.cluster.local:443
+        Merge_Log           On
+        Merge_Log_Key       data
+        Keep_Log            On
+        K8S-Logging.Parser  On
+        K8S-Logging.Exclude On
+        Buffer_Size         32k
+        Kube_Tag_Prefix     app.var.log.containers.
+    [FILTER]
+        Name    parser
+        Match app.*
+        Key_Name message
+        Parser json
+        Reserve_data On  
+    [FILTER]
+        Name       record_modifier
+        Match      app.*
+        Remove_key logtag
+        Remove_key stream
+    [FILTER]
+        Name        nest
+        Match       app.*
+        Operation   nest
+        Nest_under  kubernetes
+        Wildcard    app_log_file*
 
 cloudWatch:
   enabled: true
   match: "*"
   region: ${region}
-  logGroupName: "/aws/eks/${cluster_name}/ns/$(kubernetes['namespace_name'])"
+  logGroupName: "$(kubernetes['namespace_name'])-$(kubernetes['labels']['app.kubernetes.io/instance'])-output"
   logStreamName: "$(kubernetes['pod_name'])"
   logStreamPrefix: 
-  logKey: log
+  logKey: message
   # By default, the whole log record will be sent to CloudWatch. 
   # If you specify a key name with this option, then only the value of that key 
   # will be sent to CloudWatch.
@@ -133,11 +159,16 @@ elasticsearch:
   # extraOutputs: |
   #   Index = my-index
 
-# additionalOutputs: |
-#   [OUTPUT]
-#     Name file
-#     Format template
-#     Template {time} used={Mem.used} free={Mem.free} total={Mem.total}
+additionalOutputs: |
+    [OUTPUT]
+        Name                  cloudwatch
+        Match                 app.*
+        region                eu-west-2
+        log_group_name        $(kubernetes['namespace_name'])-$(kubernetes['labels']['app.kubernetes.io/instance'])/$(kubernetes['app_log_file'])
+        log_stream_name       $(kubernetes['pod_name'])
+        log_key               log
+        log_retention_days    90
+        auto_create_group     true
 
 serviceAccount:
   create: true
@@ -193,9 +224,6 @@ volumes:
   - name: varlibdockercontainers
     hostPath:
       path: /var/lib/docker/containers
-  - name: logs
-    hostPath:
-      path: /logs
 
 volumeMounts:
   - name: varlog
@@ -203,9 +231,6 @@ volumeMounts:
   - name: varlibdockercontainers
     mountPath: /var/lib/docker/containers
     readOnly: true
-  - name: logs
-    mountPath: /logs
-
 
 serviceMonitor:
   # service:
