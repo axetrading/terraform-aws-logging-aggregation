@@ -4,7 +4,7 @@ global:
 
 image:
   repository: 790762862953.dkr.ecr.eu-west-2.amazonaws.com/ecr-public/aws-observability/aws-for-fluent-bit
-  tag: 2.28.4
+  tag: 2.31.6
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -163,7 +163,7 @@ additionalOutputs: |
     [OUTPUT]
         Name                  cloudwatch
         Match                 app.*
-        region                eu-west-2
+        region                ${region}
         log_group_name        $(kubernetes['namespace_name'])-$(kubernetes['labels']['app.kubernetes.io/instance'])/$(kubernetes['app_log_file'])
         log_stream_name       $(kubernetes['pod_name'])
         log_key               log
