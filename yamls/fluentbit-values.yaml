@@ -28,25 +28,26 @@ service:
       Regex   (?<tag>[^.]+)?\.?(?<pod_name>[a-z0-9](?:[-a-z0-9]*[a-z0-9])?(?:\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*)\.log$
 
 input:
-  tag: "kube.*"
-  path: "/var/log/containers/*.log"
-  db: "/var/log/flb_kube.db"
-  parser: cri
-  dockerMode: "Off"
-  memBufLimit: 5MB
-  skipLongLines: "On"
-  refreshInterval: 10
+  enabled: false
   
-  extraInputs: |
-    exclude_path /var/log/containers/*-log-fetcher-*.log
-
 additionalInputs: |
+    [INPUT]
+        Name              tail
+        Tag               kube.*
+        Path              /var/log/containers/*.log
+        DB                /var/log/flb_kube.db
+        multiline.parser  docker, cri
+        Mem_Buf_Limit     10MB
+        Skip_Long_Lines   On
+        Refresh_Interval  10
+        exclude_path      /var/log/containers/*-log-fetcher-*.log
+
     [INPUT]
         Name              tail
         Tag               app.*
         Path              /var/log/containers/*-log-fetcher-*.log
         DB                /var/log/flb_app.db
-        Parser            cri
+        multiline.parser  docker, cri
         Mem_Buf_Limit     50MB
         Skip_Long_Lines   On
         Refresh_Interval  10
