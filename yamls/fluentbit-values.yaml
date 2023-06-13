@@ -4,7 +4,7 @@ global:
 
 image:
   repository: 790762862953.dkr.ecr.eu-west-2.amazonaws.com/ecr-public/aws-observability/aws-for-fluent-bit
-  tag: 2.31.6
+  tag: 2.31.11
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -29,6 +29,10 @@ service:
 
 input:
   enabled: false
+
+rbac:
+  # rbac.pspEnabled, if `true` a restricted pod security policy is created and used
+  pspEnabled: false
   
 additionalInputs: |
     [INPUT]
@@ -205,22 +209,6 @@ annotations: {}
   # iam.amazonaws.com/role: arn:aws:iam::123456789012:role/role-for-fluent-bit
 
 env: []
-## To add extra environment variables to the pods, add as below
-# env:
-#   - name: AWS_REGION
-#     valueFrom:
-#       configMapKeyRef:
-#         name: fluent-bit-cluster-info
-#         key: logs.region
-#   - name: CLUSTER_NAME
-#     valueFrom:
-#       configMapKeyRef:
-#         name: fluent-bit-cluster-info
-#         key: cluster.name
-#   - name: HOST_NAME
-#     valueFrom:
-#       fieldRef:
-#         fieldPath: spec.nodeName
 
 
 volumes:
@@ -239,24 +227,4 @@ volumeMounts:
     readOnly: true
 
 serviceMonitor:
-  # service:
-  #   type: ClusterIP
-  #   port: 2020
-  #   targetPort: 2020
-  # When set true then use a ServiceMonitor to configure scraping
   enabled: false
-  # Set the namespace the ServiceMonitor should be deployed
-  # namespace: monitoring
-  # Set how frequently Prometheus should scrape
-  # interval: 30s
-  # Set path of metrics, e.g /api/v1/metrics/prometheus
-  # telemetryPath: /api/v1/metrics/prometheus
-  # Set labels for the ServiceMonitor, use this to define your scrape label for Prometheus Operator
-  # labels:
-  # Set timeout for scrape
-  # timeout: 10s
-  # Set relabel_configs as per https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config
-  # relabelings: []
-  # Set of labels to transfer on the Kubernetes Service onto the target.
-  # targetLabels: []
-  # metricRelabelings: []

@@ -44,5 +44,5 @@ variable "log_preserve_legacy_log_group" {
 variable "fluentbit_chart_version" {
   type        = string
   description = "AWS FluentBit Chart Version"
-  default     = "0.1.21"
+  default     = "0.1.24"
 }
