@@ -37,7 +37,7 @@ additionalInputs: |
         Path              /var/log/containers/*.log
         DB                /var/log/flb_kube.db
         multiline.parser  cri
-        Mem_Buf_Limit     10MB
+        Mem_Buf_Limit     50MB
         Skip_Long_Lines   On
         Refresh_Interval  10
         exclude_path      /var/log/containers/*-log-fetcher-*.log
@@ -76,6 +76,11 @@ additionalFilters: |
         Buffer_Size         32k
         Kube_Tag_Prefix     app.var.log.containers.
     [FILTER]
+        name                  multiline
+        match                 kube.*
+        multiline.parser      go, java
+        multiline.key_content log
+    [FILTER]
         Name    parser
         Match app.*
         Key_Name message
@@ -100,7 +105,7 @@ cloudWatch:
   logGroupName: "$(kubernetes['namespace_name'])-$(kubernetes['container_name'])-output"
   logStreamName: "$(kubernetes['pod_name'])"
   logStreamPrefix: 
-  logKey: message
+  logKey: log
   # By default, the whole log record will be sent to CloudWatch. 
   # If you specify a key name with this option, then only the value of that key 
   # will be sent to CloudWatch.
