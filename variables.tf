@@ -44,5 +44,11 @@ variable "log_preserve_legacy_log_group" {
 variable "fluentbit_chart_version" {
   type        = string
   description = "AWS FluentBit Chart Version"
-  default     = "0.1.24"
+  default     = "0.1.32"
+}
+
+variable "service_monitor_enabled" {
+  type        = bool
+  description = "Boolean to enable service monitor"
+  default     = false
 }

@@ -4,7 +4,7 @@ global:
 
 image:
   repository: 790762862953.dkr.ecr.eu-west-2.amazonaws.com/ecr-public/aws-observability/aws-for-fluent-bit
-  tag: 2.31.11
+  tag: 2.32.0
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -31,7 +31,6 @@ input:
   enabled: false
 
 rbac:
-  # rbac.pspEnabled, if `true` a restricted pod security policy is created and used
   pspEnabled: false
   
 additionalInputs: |
@@ -227,4 +226,29 @@ volumeMounts:
     readOnly: true
 
 serviceMonitor:
-  enabled: false
+  service: 
+    type: ClusterIP
+    port: 2020
+    targetPort: 2020
+    extraPorts: []
+      # - port: 2021
+      #   targetPort: 2021
+      #   protocol: TCP
+      #   name: metrics
+  ## When set true then use a ServiceMonitor to configure scraping
+  enabled: ${serviceMonitorEnabled}
+  interval: 30s
+  telemetryPath: /api/v1/metrics/prometheus
+  labels:
+    # app: example-application
+    # teamname: example
+  timeout: 10s
+  relabelings: []
+  targetLabels: []
+  metricRelabelings: []
+  extraEndpoints: []
+    # - port: metrics
+    #   path: /metrics
+    #   interval: 30s
+    #   scrapeTimeout: 10s
+    #   scheme: http

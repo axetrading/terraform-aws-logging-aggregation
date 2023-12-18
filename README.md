@@ -1,3 +1,5 @@
+This module creates a CloudWatch agent and Fluentbit daemonset for an EKS cluster.
+It uses the 
 # terraform-aws-logging-aggregation
 
 Example usage:
@@ -73,3 +75,16 @@ No modules.
 
 No outputs.
 <!-- END_TF_DOCS -->
+
+## License
+
+This project uses parts of the Helm chart from the AWS EKS Charts repository, available at:
+https://github.com/aws/eks-charts/tree/master/stable/aws-for-fluent-bit
+
+The original work in the AWS EKS Charts repository is licensed under the Apache License, Version 2.0 (the "License"). A copy of the License is included in this project and can be found in the `LICENSE` file.
+
+## Modifications
+
+We have modified the original Helm chart from the AWS EKS Charts repository for [describe the purpose of modifications, e.g., specific integrations, customizations for your environment, etc.].
+
+Details of these modifications can be found in this repository.
