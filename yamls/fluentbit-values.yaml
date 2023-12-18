@@ -240,7 +240,7 @@ serviceMonitor:
   interval: 30s
   telemetryPath: /api/v1/metrics/prometheus
   labels:
-    # app: example-application
+    release: prometheus
     # teamname: example
   timeout: 10s
   relabelings: []
