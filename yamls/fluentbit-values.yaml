@@ -41,7 +41,6 @@ additionalInputs: |
         DB                /var/log/flb_kube.db
         multiline.parser  cri
         Mem_Buf_Limit     50MB
-        Skip_Long_Lines   On
         Refresh_Interval  10
         exclude_path      /var/log/containers/*-log-fetcher-*.log
 
@@ -52,7 +51,6 @@ additionalInputs: |
         DB                /var/log/flb_app.db
         Parser            cri
         Mem_Buf_Limit     50MB
-        Skip_Long_Lines   On
         Refresh_Interval  10
 
 filter:
@@ -76,7 +74,7 @@ additionalFilters: |
         Keep_Log            On
         K8S-Logging.Parser  On
         K8S-Logging.Exclude On
-        Buffer_Size         32k
+        Buffer_Size         256k
         Kube_Tag_Prefix     app.var.log.containers.
     [FILTER]
         name                  multiline
@@ -118,9 +116,8 @@ cloudWatch:
   autoCreateGroup: true
   endpoint:
   credentialsEndpoint: {}
-  # extraOutputs: |
-  #   ...
-
+  extraOutputs: |
+    Retry_Limit False
 firehose:
   enabled: false
   match: "*"
@@ -178,6 +175,7 @@ additionalOutputs: |
         log_key               log
         log_retention_days    90
         auto_create_group     true
+        Retry_Limit           False
 
 serviceAccount:
   create: true
