@@ -119,7 +119,7 @@ cloudWatch:
   extraOutputs: |
     Retry_Limit False
 
-cloudwatchLogs:
+cloudWatchLogs:
   enabled: false
 firehose:
   enabled: false
