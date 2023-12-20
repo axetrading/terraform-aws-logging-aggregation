@@ -118,52 +118,17 @@ cloudWatch:
   credentialsEndpoint: {}
   extraOutputs: |
     Retry_Limit False
+
+cloudwatchLogs:
+  enabled: false
 firehose:
   enabled: false
-  match: "*"
-  region: 
-  deliveryStream: "my-stream"
-  dataKeys:
-  roleArn:
-  endpoint:
-  timeKey:
-  # extraOutputs: |
-  #   ...
 
 kinesis:
   enabled: false
-  match: "*"
-  region: 
-  stream: "my-kinesis-stream-name"
-  partitionKey: "container_id"
-  appendNewline:
-  replaceDots:
-  dataKeys:
-  roleArn:
-  endpoint:
-  stsEndpoint:
-  timeKey:
-  timeKeyFormat:
-  compression:
-  aggregation:
-  experimental:
-    concurrency:
-    concurrencyRetries:
-  # extraOutputs: |
-  #   ...
 
 elasticsearch:
   enabled: false
-  match: "*"
-  host:
-  awsRegion: ${region}
-  awsAuth: "On"
-  tls: "On"
-  port: "443"
-  retryLimit: 6
-  replaceDots: "On"
-  # extraOutputs: |
-  #   Index = my-index
 
 additionalOutputs: |
     [OUTPUT]
@@ -187,11 +152,8 @@ resources:
   limits:
     memory: 250Mi
   requests:
-    cpu: 50m
-    memory: 50Mi
-
-## Assign a PriorityClassName to pods if set
-# priorityClassName: system-node-critical
+    cpu: 100m
+    memory: 250Mi
 
 updateStrategy:
   type: RollingUpdate
@@ -239,7 +201,6 @@ serviceMonitor:
   telemetryPath: /api/v1/metrics/prometheus
   labels:
     release: prometheus
-    # teamname: example
   timeout: 10s
   relabelings: []
   targetLabels: []
