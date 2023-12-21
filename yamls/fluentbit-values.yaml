@@ -89,13 +89,13 @@ additionalFilters: |
     [FILTER]
         Name         parser
         Match        app.*
-        Key_Name     message
+        Key_Name     log
         Parser       json
         Reserve_data On  
     [FILTER]
         Name       record_modifier
         Match      app.*
-        Remove_key logtag
+        Remove_key _p
         Remove_key stream
     [FILTER]
         Name        nest
