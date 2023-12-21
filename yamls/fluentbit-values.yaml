@@ -51,7 +51,7 @@ additionalInputs: |
         Tag               app.*
         Path              /var/log/containers/*-log-fetcher-*.log
         DB                /var/log/flb_app.db
-        Parser            cri
+        multiline.parser  cri
         Mem_Buf_Limit     50MB
         Refresh_Interval  10
         Buffer_Chunk_Size 255k
