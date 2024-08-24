@@ -4,7 +4,7 @@ global:
 
 image:
   repository: 790762862953.dkr.ecr.eu-west-2.amazonaws.com/ecr-public/aws-observability/aws-for-fluent-bit
-  tag: 2.32.0
+  tag: 2.32.2.20240820
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -36,18 +36,20 @@ rbac:
 additionalInputs: |
     [INPUT]
         Name              tail
+        Alias             kube
         Tag               kube.*
         Path              /var/log/containers/*.log
         DB                /var/log/flb_kube.db
         multiline.parser  cri
         Mem_Buf_Limit     50MB
         Refresh_Interval  10
-        exclude_path      /var/log/containers/*-log-fetcher-*.log
+        exclude_path      /var/log/containers/*-log-fetcher-*.log, /var/log/containers/*_amazon-cloudwatch_*.log, /var/log/containers/s1-agent-*.log, /var/log/containers/*_kube-system_*.log, /var/log/containers/*_monitoring_*.log
         Buffer_Chunk_Size 255k
         Buffer_Max_Size   10MB
 
     [INPUT]
         Name              tail
+        Alias             app
         Tag               app.*
         Path              /var/log/containers/*-log-fetcher-*.log
         DB                /var/log/flb_app.db
@@ -138,6 +140,7 @@ elasticsearch:
 additionalOutputs: |
     [OUTPUT]
         Name                  cloudwatch
+        Alias                 applications
         Match                 app.*
         region                ${region}
         log_group_name        $(kubernetes['namespace_name'])-$(kubernetes['labels']['app.kubernetes.io/instance'])/$(kubernetes['app_log_file'])
@@ -155,10 +158,10 @@ serviceAccount:
 
 resources:
   limits:
-    memory: 250Mi
+    memory: 512Mi
   requests:
     cpu: 100m
-    memory: 250Mi
+    memory: 512Mi
 
 updateStrategy:
   type: RollingUpdate
