@@ -177,7 +177,7 @@ annotations: {}
 
 env: []
 
-
+priorityClassName: system-node-critical
 volumes:
   - name: varlog
     hostPath:
