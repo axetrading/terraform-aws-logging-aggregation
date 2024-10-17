@@ -32,7 +32,7 @@ variable "enable_fluentbit" {
 variable "log_retention_in_days" {
   description = "Number of days to retain log events"
   type        = number
-  default     = 90
+  default     = 14
 }
 
 variable "log_preserve_legacy_log_group" {
@@ -44,7 +44,7 @@ variable "log_preserve_legacy_log_group" {
 variable "fluentbit_chart_version" {
   type        = string
   description = "AWS FluentBit Chart Version"
-  default     = "0.1.32"
+  default     = "0.1.34"
 }
 
 variable "service_monitor_enabled" {
