@@ -43,7 +43,7 @@ additionalInputs: |
         multiline.parser  cri
         Mem_Buf_Limit     50MB
         Refresh_Interval  10
-        exclude_path      /var/log/containers/*-log-fetcher-*.log, /var/log/containers/*_amazon-cloudwatch_*.log, /var/log/containers/s1-agent-*.log, /var/log/containers/*_kube-system_*.log, /var/log/containers/*_monitoring_*.log
+        exclude_path      /var/log/containers/*-log-fetcher-*.log, /var/log/containers/*_amazon-cloudwatch_*.log, /var/log/containers/s1-agent-*.log, /var/log/containers/*_kube-system_*.log, /var/log/containers/*_monitoring_*.log, /var/log/containers/*_cronjob_*.log, /var/log/containers/*_axetrader-server-*.log
         Buffer_Chunk_Size 255k
         Buffer_Max_Size   10MB
 
@@ -52,6 +52,7 @@ additionalInputs: |
         Alias             app
         Tag               app.*
         Path              /var/log/containers/*-log-fetcher-*.log
+        exclude_path      /var/log/containers/*-axetrader-server-log-fetcher-*.log
         DB                /var/log/flb_app.db
         multiline.parser  cri
         Mem_Buf_Limit     50MB
